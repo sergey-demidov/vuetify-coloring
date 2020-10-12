@@ -163,7 +163,6 @@
 
 <script>
 import _ from "lodash";
-import Color from "color";
 import VDialogPosition from "./VDialogPosition";
 const Diff = require("diff");
 
@@ -295,7 +294,8 @@ export default {
       res.push({
         background: getComputedStyle(el)["background-color"],
         classPath: this.getClass(el),
-        css: this.getMatchedCSSRules(el),
+        // css: this.getMatchedCSSRules(el),
+        css: this.css(el, "background"),
         header: "clicked"
       });
       while (el) {
@@ -325,11 +325,6 @@ export default {
           const cl = row.className.split(" ");
           for (const r of cl) {
             rating[r] = !rating[r] ? 1 : rating[r] + 1;
-            // if (!rating[r]) {
-            //   rating[r] = 1;
-            // } else {
-            //   rating[r] += 1;
-            // }
           }
         }
       }
@@ -347,58 +342,29 @@ export default {
         return "";
       }
     },
-    getMatchedCSSRules(element, prop = "background-color") {
-      let i;
-      let matching = [];
-      let sheets = document.styleSheets;
-      console.dir(sheets);
-
-      function loopRules(rules) {
-        let i, rule;
-        for (i = 0; i < rules.length; i++) {
-          rule = rules[i];
-          if (rule instanceof CSSMediaRule) {
-            if (window.matchMedia(rule.conditionText).matches) {
-              loopRules(rule.cssRules);
-            }
-          }
-          if (
-            rule instanceof CSSStyleRule &&
-            element.matches(rule.selectorText)
-          ) {
-            let propertyValue = rule.style.getPropertyValue(prop);
-            if (propertyValue) {
-              let elementColor = Color(getComputedStyle(element)[prop]);
-              let v = propertyValue.match(/var\((--[\w\d-]+)\)/);
-              let ruleColor = Color("#000000");
-              try {
-                if (v) {
-                  ruleColor = Color(
-                    getComputedStyle(document.body)
-                      .getPropertyValue(v[1])
-                      .trim()
-                      .toUpperCase()
-                  );
-                } else {
-                  ruleColor = Color(propertyValue);
-                }
-              } catch (e) {
-                console.error(e);
-              }
-              if (ruleColor.hex() === elementColor.hex()) {
-                matching.push(rule);
-              }
+    css(el, prop) {
+      console.log(prop);
+      const re = new RegExp(prop, "g");
+      const sheets = document.styleSheets;
+      let ret = [];
+      el.matches = el.matches || el.webkitMatchesSelector;
+      for (const i in sheets) {
+        if (
+          Object.prototype.hasOwnProperty.call(sheets, i) &&
+          !sheets[i].href
+        ) {
+          const rules = sheets[i].rules || sheets[i].cssRules;
+          for (const r in rules) {
+            if (
+              Object.prototype.hasOwnProperty.call(rules, r) &&
+              el.matches(rules[r].selectorText && rules[r].cssText.match(re))
+            ) {
+              ret.push(rules[r].cssText);
             }
           }
         }
       }
-
-      for (i = 0; i < sheets.length; i++) {
-        if (!sheets[i].href) {
-          loopRules(sheets[i].cssRules);
-        }
-      }
-      return matching;
+      return ret;
     }
   }
 };
