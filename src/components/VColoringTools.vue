@@ -43,18 +43,21 @@
                           v-if="item.classPath"
                           @click="selector = item.classPath"
                         >
-                          <td>class</td>
-                          <td>{{ item.classPath }}</td>
+                          <td style="width:6em">class</td>
+                          <td class="pl-0">
+                            <pre>{{ item.classPath }} </pre>
+                          </td>
                           <td class="px-0"></td>
                         </tr>
                         <tr
                           class="clickable"
                           v-for="(css, c) in item.css"
                           :key="'css_' + c"
+                          @click="selector = css.selectorText"
                         >
-                          <td>css</td>
-                          <td @click="selector = css.selectorText" class="pl-0">
-                            <pre> {{ folding(css.cssText) }} </pre>
+                          <td style="width:6em">css</td>
+                          <td class="pl-0">
+                            <pre>{{ folding(css.cssText) }} </pre>
                           </td>
                           <td class="px-0">
                             <v-icon
@@ -69,7 +72,6 @@
                             >
                               mdi-exclamation
                             </v-icon>
-                            <div></div>
                           </td>
                         </tr>
                       </tbody>
@@ -79,36 +81,22 @@
               </v-expansion-panel>
             </v-expansion-panels>
             <v-row class="pt-2">
-              <v-col cols="10">
-                <v-textarea
-                  append-outer-icon=""
-                  readonly
-                  rows="4"
-                  outlined
-                  no-resize
-                  auto-grow
-                  hide-details
-                  class="vc-animate"
-                  color="#777777"
-                  :label="textareaLabel"
-                  @mouseover="label(true)"
-                  @mouseleave="label(false)"
-                  @click="copy(cssGenerator)"
-                  v-model="cssGenerator"
+              <v-col cols="10" style="position: relative">
+                <v-btn
+                  @click="important = important ? '' : ' !important'"
+                  icon
+                  style="position: absolute; right: 0; top: 0"
+                  class="ma-4"
+                  title="Important"
                 >
-                  <template v-slot:append>
-                    <v-btn
-                      icon
-                      small
-                      :color="important ? '#ff0000' : '#777777'"
-                      style="background-color: #cccccc"
-                      @click="important = important ? '' : ' !important'"
-                      title="!important"
-                    >
-                      <v-icon> mdi-exclamation</v-icon>
-                    </v-btn>
-                  </template>
-                </v-textarea>
+                  <v-icon
+                    style="background-color: #aaaaaa; border-radius: 50%"
+                    :style="{ color: important ? 'red' : '#777777' }"
+                  >
+                    mdi-exclamation
+                  </v-icon>
+                </v-btn>
+                <v-flex class="vc-prewrap" v-html="strGenerator"> </v-flex>
               </v-col>
               <v-col cols="2" class="pt-4">
                 <v-btn
@@ -177,6 +165,7 @@
 import _ from "lodash";
 import Color from "color";
 import VDialogPosition from "./VDialogPosition";
+const Diff = require("diff");
 
 export default {
   name: "VColoringTools",
@@ -212,19 +201,11 @@ export default {
       snackbar: false,
       snackbarMessage: "",
       dialogPosition: "",
-      style: {}
+      style: {},
+      strGenerator: ""
     };
   },
   computed: {
-    strGenerator() {
-      if (this.selector && this.currentRule) {
-        return `<p class="blink"> ${this.selector} </p> {
-    background-color: <p class="blink"> var(--v-${this.currentRule}-base)</p><p class="blink">${this.important}</p>;
-}`;
-      } else {
-        return " ";
-      }
-    },
     cssGenerator() {
       if (this.selector && this.currentRule) {
         return `${this.selector} {
@@ -233,6 +214,22 @@ export default {
       } else {
         return " ";
       }
+    }
+  },
+  watch: {
+    cssGenerator(n, o) {
+      console.dir(Diff.diffWords(o, n));
+      let res = "";
+      let diffs = Diff.diffWords(o, n);
+      for (let d of diffs) {
+        console.dir(d.value);
+        res += d.added
+          ? `<span class="blink">${d.value}</span>`
+          : d.removed
+          ? ""
+          : d.value;
+      }
+      this.strGenerator = res.replaceAll("\n", "<br />");
     }
   },
   created() {
@@ -283,9 +280,11 @@ export default {
       this.toolDialog = false;
       this.currentRule = "";
       this.testCssRule = "";
+      this.selector = "";
       this.colored_tab = null;
       this.colored = [];
       this.important = false;
+      this.setStyle("");
     },
     getColored(e) {
       if (!this.colorDebugXXX || !e.ctrlKey) {
@@ -408,6 +407,18 @@ export default {
 <style>
 /*noinspection CssUnresolvedCustomProperty*/
 
+.vc-prewrap {
+  white-space: pre-wrap;
+  border-color: #777777;
+  border-radius: 7px;
+  border-style: solid;
+  border-width: 2px;
+  height: 6em;
+  padding: 1em;
+  line-height: 1.2em;
+  font-size: 16px;
+}
+
 .vc-animate {
   transition-property: background-color;
   transition-duration: 1s;
@@ -415,7 +426,7 @@ export default {
 
 @keyframes highlight {
   0% {
-    background: red;
+    background: purple;
   }
   100% {
     background: none;
