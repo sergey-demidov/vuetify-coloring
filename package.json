@@ -1,13 +1,18 @@
 {
   "name": "vuetify-coloring",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
+  "main": "./src/index.js",
+  "files": [
+    "src/index.js",
+    "src/components/*"
+  ],
   "dependencies": {
     "core-js": "^3.6.5",
     "diff": "^4.0.2",
