@@ -5,10 +5,10 @@
       v-model="toolDialog"
       persistent
       hide-overlay
-      max-width="700px"
+      max-width="600px"
       style="background-color: #eeeeee;"
     >
-      <div id="VuetifyColoringTool">
+      <div id="VuetifyColoringTool" class="vc-panel">
         <v-toolbar class="vc-header" dense>
           <v-toolbar-title> Coloring</v-toolbar-title>
           <v-spacer></v-spacer>
@@ -17,6 +17,22 @@
           </v-toolbar-title>
         </v-toolbar>
         <v-card class="vc-panel">
+          <v-card-actions class="pt-4 pb-0 vc-panel">
+            <v-spacer />
+            <v-btn
+              v-for="name in colors"
+              :key="'preset_' + name"
+              small
+              rounded
+              :color="currentRule === name ? '#cccccc' : '#eeeeee'"
+              style="color: #777777;"
+              @click="currentRule = name"
+            >
+              {{ name }}
+            </v-btn>
+            <v-spacer />
+          </v-card-actions>
+
           <v-card-text>
             <v-expansion-panels v-model="colored_tab">
               <v-expansion-panel
@@ -43,11 +59,13 @@
                           v-if="item.classPath"
                           @click="selector = item.classPath"
                         >
-                          <td style="width:6em">class</td>
-                          <td class="pl-0">
-                            <pre>{{ item.classPath }} </pre>
+                          <td style="width: 42px;" class="px-1">class</td>
+                          <td class="px-0">
+                            <pre style="max-width: 470px; overflow: hidden">{{
+                              item.classPath
+                            }}</pre>
                           </td>
-                          <td class="px-0"></td>
+                          <td class="px-1"></td>
                         </tr>
                         <tr
                           class="clickable"
@@ -55,11 +73,13 @@
                           :key="'css_' + c"
                           @click="selector = css.selectorText"
                         >
-                          <td style="width:6em">css</td>
-                          <td class="pl-0">
-                            <pre>{{ folding(css.cssText) }} </pre>
-                          </td>
+                          <td style="width: 42px" class="px-1">css</td>
                           <td class="px-0">
+                            <pre style="max-width: 470px; overflow: hidden">{{
+                              folding(css.cssText)
+                            }}</pre>
+                          </td>
+                          <td class="px-1">
                             <v-icon
                               v-if="
                                 css.style.getPropertyPriority(
@@ -80,63 +100,42 @@
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
-            <v-row class="pt-2">
-              <v-col cols="10" style="position: relative">
-                <v-btn
-                  @click="important = important ? '' : ' !important'"
-                  icon
-                  style="position: absolute; right: 0; top: 0"
-                  class="ma-4"
-                  title="Important"
+            <v-flex class="pt-4" style="position: relative">
+              <v-flex
+                style="position: absolute; top: 2px; left: 10px; background-color: #eeeeee; padding: 4px;"
+                v-text="textareaLabel"
+              ></v-flex>
+              <v-btn
+                @click="important = important ? '' : ' !important'"
+                icon
+                style="position: absolute; right: 0; top: 0"
+                class="mx-0 my-4"
+                title="Important"
+              >
+                <v-icon
+                  style="background-color: #aaaaaa; border-radius: 50%"
+                  :style="{ color: important ? 'red' : '#777777' }"
+                  @mouseenter="setLabel('important')"
+                  @mouseleave="setLabel()"
                 >
-                  <v-icon
-                    style="background-color: #aaaaaa; border-radius: 50%"
-                    :style="{ color: important ? 'red' : '#777777' }"
-                  >
-                    mdi-exclamation
-                  </v-icon>
-                </v-btn>
-                <v-flex class="vc-prewrap" v-html="strGenerator"> </v-flex>
-              </v-col>
-              <v-col cols="2" class="pt-4">
-                <v-btn
-                  class="mt-0"
-                  @click="setStyle(cssGenerator)"
-                  width="80"
-                  height="33"
-                >
-                  apply
-                </v-btn>
-                <v-btn
-                  class="mt-4"
-                  @click="setStyle('')"
-                  width="80"
-                  height="33"
-                >
-                  reset
-                </v-btn>
-              </v-col>
-            </v-row>
+                  mdi-exclamation
+                </v-icon>
+              </v-btn>
+              <v-flex
+                @click="copy(cssGenerator)"
+                class="vc-prewrap clickable"
+                style="overflow: hidden"
+                v-html="strGenerator"
+                @mouseenter="setLabel('css')"
+                @mouseleave="setLabel()"
+              >
+              </v-flex>
+            </v-flex>
           </v-card-text>
-          <v-card-actions class="pt-4 pb-0 vc-panel">
-            <v-spacer />
-            <v-btn
-              v-for="name in colors"
-              :key="'preset_' + name"
-              small
-              rounded
-              :color="currentRule === name ? '#cccccc' : '#eeeeee'"
-              style="color: #777777;"
-              @click="currentRule = name"
-            >
-              {{ name }}
-            </v-btn>
-            <v-spacer />
-          </v-card-actions>
 
-          <v-card-actions>
+          <v-card-actions class="pt-0 pb-3">
             <v-spacer />
-            <v-btn class="mt-6 vc-panel" text @click="cancel()">
+            <v-btn class="pt-0 vc-panel" text @click="cancel()">
               return
             </v-btn>
             <v-spacer />
@@ -149,14 +148,11 @@
       v-model="snackbar"
       color="#777777"
       timeout="2000"
-      style="color: #777777"
+      style="color: #777777;"
     >
-      {{ snackbarMessage }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="#eeeeee" text v-bind="attrs" @click="snackbar = false">
-          Close
-        </v-btn>
-      </template>
+      <v-flex class="text-center">
+        {{ snackbarMessage }}
+      </v-flex>
     </v-snackbar>
   </div>
 </template>
@@ -196,7 +192,7 @@ export default {
       selector: "",
       testCssRule: "",
       important: "",
-      textareaLabel: "Possible selector",
+      textareaLabel: "",
       snackbar: false,
       snackbarMessage: "",
       dialogPosition: "",
@@ -229,12 +225,13 @@ export default {
           : d.value;
       }
       this.strGenerator = res.replaceAll("\n", "<br />");
+      this.setStyle(n);
     }
   },
   created() {
     this.style = document.createElement("style");
     document.getElementsByTagName("head")[0].appendChild(this.style);
-    console.log("end of created");
+    this.setLabel();
   },
   mounted() {
     document.addEventListener("mouseup", this.getColored);
@@ -244,20 +241,22 @@ export default {
   },
   methods: {
     folding(str) {
+      console.dir(str);
       return str
         .replaceAll(/([{;])/g, "$1\n")
         .split("\n")
         .map((s, i, arr) => {
-          return i > 0 && i < arr.length - 1 ? "  " + s : s;
+          return i > 0 && i < arr.length - 1 ? "  " + s : s.trimLeft();
         })
         .join("\n");
     },
-    label(hover) {
-      if (hover && this.cssGenerator.length > 1) {
-        this.textareaLabel = "Copy";
-      } else {
-        this.textareaLabel = "Possible selector";
-      }
+    setLabel(hover) {
+      this.textareaLabel =
+        hover === "css"
+          ? "Copy"
+          : hover === "important"
+          ? "Important"
+          : "Possible selector";
     },
     setStyle(style) {
       this.style.innerHTML = style;
@@ -286,25 +285,27 @@ export default {
       this.setStyle("");
     },
     getColored(e) {
-      if (!this.colorDebugXXX || !e.ctrlKey) {
+      if (this.toolDialog || !e.ctrlKey) {
         return;
       }
       let el = e.target;
       let res = [];
       res.push({
-        background: getComputedStyle(el)["background-color"],
+        background: getComputedStyle(el).getPropertyValue("background-color"),
         classPath: this.getClass(el),
         // css: this.getMatchedCSSRules(el),
-        css: this.css(el, "background"),
-        header: "clicked"
+        css: this.css(el, "background-color"),
+        header: "clicked element"
       });
       while (el) {
-        let bg = getComputedStyle(el)["background-color"];
+        let bg = getComputedStyle(el).getPropertyValue("background-color");
         if (bg.length > 0 && bg !== "rgba(0, 0, 0, 0)") {
+          // console.dir(el);
+          // console.log(getComputedStyle(el, null).getPropertyValue("background-color"))
           res.push({
             background: bg,
             classPath: this.getClass(el),
-            css: this.getMatchedCSSRules(el),
+            css: this.css(el, "background-color"),
             header: "colored by"
           });
           this.colored = _.reverse(res);
@@ -343,8 +344,9 @@ export default {
       }
     },
     css(el, prop) {
-      console.log(prop);
-      const re = new RegExp(prop, "g");
+      let dummy = document.createElement(el.tagName);
+      dummy.style.display = "none";
+      document.body.appendChild(dummy);
       const sheets = document.styleSheets;
       let ret = [];
       el.matches = el.matches || el.webkitMatchesSelector;
@@ -357,13 +359,26 @@ export default {
           for (const r in rules) {
             if (
               Object.prototype.hasOwnProperty.call(rules, r) &&
-              el.matches(rules[r].selectorText && rules[r].cssText.match(re))
+              el.matches(rules[r].selectorText) &&
+              rules[r].style.getPropertyValue(prop)
             ) {
-              ret.push(rules[r].cssText);
+              dummy.style[prop] = rules[r].style.getPropertyValue(prop);
+              // console.dir(rules[r].style[prop]);
+              // console.dir(getComputedStyle(el).getPropertyValue(prop));
+              // console.dir(dummy.style[prop]);
+              // console.dir(getComputedStyle(dummy).getPropertyValue(prop));
+              // console.dir(getComputedStyle(dummy));
+              if (
+                getComputedStyle(el).getPropertyValue(prop) ===
+                getComputedStyle(dummy).getPropertyValue(prop)
+              ) {
+                ret.push(rules[r]);
+              }
             }
           }
         }
       }
+      document.body.removeChild(dummy);
       return ret;
     }
   }

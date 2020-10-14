@@ -11,16 +11,16 @@ export default new Vuetify({
     dark: true,
     themes: {
       dark: {
-        primary: "#012",
-        header: "#234",
-        panel: "#456",
-        background: "#678"
+        primary: "#001122",
+        header: "#223344",
+        panel: "#445566",
+        background: "#667788"
       },
       light: {
-        primary: "#012",
-        header: "#234",
-        panel: "#456",
-        background: "#678"
+        primary: "#001122",
+        header: "#223344",
+        panel: "#445566",
+        background: "#667788"
       }
     }
   }

@@ -18,7 +18,7 @@
           </v-icon>
         </v-flex>
       </template>
-      <div id="VuetifyColoring">
+      <div id="VuetifyColoring" class="vc-panel">
         <v-card>
           <v-toolbar class="vc-header">
             <v-toolbar-title>
@@ -145,18 +145,22 @@
         </v-card>
       </div>
     </v-dialog>
+    <v-coloring-tools v-if="tools" :presets="presets" />
   </div>
 </template>
 
 <script>
-// import _ from "lodash";
-// import Color from "color";
 import VDialogPosition from "./VDialogPosition";
+import VColoringTools from "./VColoringTools";
 
 export default {
   name: "VColoring",
-  components: { VDialogPosition },
+  components: { VDialogPosition, VColoringTools },
   props: {
+    tools: {
+      type: Boolean,
+      default: false
+    },
     colors: {
       type: Array,
       default: function() {

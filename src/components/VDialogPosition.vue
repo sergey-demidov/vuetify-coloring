@@ -61,10 +61,10 @@ export default {
         console.error("v-dialog-position works only inside v-dialog tag");
         return;
       }
-      if (typeof dir !== "string") {
-        if (this.position === dirs.center) return;
-        else dir = this.position;
-      }
+      // if (typeof dir !== "string") {
+      //   if (this.position === dirs.center) return;
+      //   else dir = this.position;
+      // }
       let width = el.clientWidth;
       let screenWidth =
         window.innerWidth ||
@@ -72,7 +72,6 @@ export default {
         document.body.clientWidth;
       let marginRight =
         parseInt(getComputedStyle(el)["margin-right"], 10) || 24;
-      // console.log("marginRight: " + marginRight);
       let marginLeft;
       if (dir === dirs.left) {
         marginLeft = `-${screenWidth - width - marginRight * 4}px`;
@@ -84,7 +83,6 @@ export default {
       }
       this.position = dir;
       el.style["margin-left"] = marginLeft;
-      // console.dir(getComputedStyle(el));
     },
     getParentByClass(el, className) {
       while (el) {
