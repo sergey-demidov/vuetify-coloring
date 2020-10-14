@@ -1,6 +1,6 @@
 {
   "name": "vuetify-coloring",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -10,8 +10,7 @@
   },
   "main": "./src/index.js",
   "files": [
-    "src/index.js",
-    "src/components/*"
+    "src"
   ],
   "dependencies": {
     "core-js": "^3.6.5",
