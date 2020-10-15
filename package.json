@@ -6,7 +6,11 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "publish": "standard-version && git push --follow-tags origin master && git subtree push --prefix dist origin gh-pages && npm publish"
+  },
+  "gitHooks": {
+    "pre-commit": "npm run build && git add dist"
   },
   "main": "./src/index.js",
   "files": [
@@ -38,9 +42,6 @@
     "vue-cli-plugin-vuetify": "~2.0.7",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.3.0"
-  },
-  "gitHooks": {
-    "pre-commit": ""
   },
   "lint-staged": {
     "*.{js,jsx,vue}": [
