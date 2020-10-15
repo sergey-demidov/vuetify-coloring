@@ -160,6 +160,7 @@
 <script>
 import _ from "lodash";
 import VDialogPosition from "./VDialogPosition";
+
 const Diff = require("diff");
 
 export default {
@@ -351,10 +352,11 @@ export default {
       let ret = [];
       el.matches = el.matches || el.webkitMatchesSelector;
       for (const i in sheets) {
-        if (
-          Object.prototype.hasOwnProperty.call(sheets, i) &&
-          !sheets[i].href
-        ) {
+        if (Object.prototype.hasOwnProperty.call(sheets, i)) {
+          if (sheets[i].href) {
+            console.log(sheets[i].href);
+            continue;
+          }
           const rules = sheets[i].rules || sheets[i].cssRules;
           for (const r in rules) {
             if (
