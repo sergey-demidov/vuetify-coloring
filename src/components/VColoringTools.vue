@@ -214,11 +214,11 @@ export default {
   },
   watch: {
     cssGenerator(n, o) {
-      console.dir(Diff.diffWords(o, n));
+      // console.dir(Diff.diffWords(o, n));
       let res = "";
       let diffs = Diff.diffWords(o, n);
       for (let d of diffs) {
-        console.dir(d.value);
+        // console.dir(d.value);
         res += d.added
           ? `<span class="blink">${d.value}</span>`
           : d.removed
@@ -242,7 +242,7 @@ export default {
   },
   methods: {
     folding(str) {
-      console.dir(str);
+      // console.dir(str);
       return str
         .replaceAll(/([{;])/g, "$1\n")
         .split("\n")
@@ -294,15 +294,12 @@ export default {
       res.push({
         background: getComputedStyle(el).getPropertyValue("background-color"),
         classPath: this.getClass(el),
-        // css: this.getMatchedCSSRules(el),
         css: this.css(el, "background-color"),
         header: "clicked element"
       });
       while (el) {
         let bg = getComputedStyle(el).getPropertyValue("background-color");
         if (bg.length > 0 && bg !== "rgba(0, 0, 0, 0)") {
-          // console.dir(el);
-          // console.log(getComputedStyle(el, null).getPropertyValue("background-color"))
           res.push({
             background: bg,
             classPath: this.getClass(el),
@@ -357,8 +354,9 @@ export default {
           try {
             rules = sheets[i].rules || sheets[i].cssRules;
           } catch (e) {
-            console.error(e);
-            console.dir(sheets[i].href);
+            // eslint-disable-next-line no-console
+            console.error(e, sheets[i].href);
+            continue;
           }
           for (const r in rules) {
             if (
@@ -445,6 +443,8 @@ export default {
 
 #VuetifyColoringTool .v-expansion-panel-content__wrap {
   padding: 4px 12px 4px 12px !important;
+  background-color: #eeeeee !important;
+  color: #777777 !important;
 }
 
 .clickable {

@@ -58,6 +58,7 @@ export default {
       // console.log(dir);
       let el = this.getParentByClass(this.$refs["root"], "v-dialog");
       if (!el) {
+        // eslint-disable-next-line no-console
         console.error("v-dialog-position works only inside v-dialog tag");
         return;
       }

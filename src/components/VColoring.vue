@@ -235,7 +235,7 @@ export default {
       let theme = this.$vuetify.theme.themes[this.themeName];
       if (typeof localStorage.colors !== "undefined") {
         colors = JSON.parse(localStorage.colors);
-        console.dir(colors);
+        // console.dir(colors);
         for (const name of this.colors) {
           if (
             this.colors.includes(name) &&
@@ -243,7 +243,7 @@ export default {
             colors[name].toString().match(/^#[abcdef\d]{6}$/i)
           ) {
             this.current[name] = colors[name].toString();
-            console.log("get " + name + " " + this.current[name]);
+            // console.log("get " + name + " " + this.current[name]);
           }
         }
       }
@@ -252,10 +252,10 @@ export default {
           if (typeof this.current[name] === "undefined") {
             this.current[name] = theme[name];
           }
-          console.log("set " + name + " " + this.current[name]);
+          // console.log("set " + name + " " + this.current[name]);
         }
         this.current = JSON.parse(JSON.stringify(this.current));
-        console.dir(this.current);
+        // console.dir(this.current);
       }
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -264,7 +264,7 @@ export default {
     this.style = document.createElement("style");
     document.getElementsByTagName("head")[0].appendChild(this.style);
     this.setStyle();
-    console.log("end of created");
+    // console.log("end of created");
   },
   mounted() {
     // console.dir(this.presets)
