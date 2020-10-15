@@ -353,11 +353,13 @@ export default {
       el.matches = el.matches || el.webkitMatchesSelector;
       for (const i in sheets) {
         if (Object.prototype.hasOwnProperty.call(sheets, i)) {
-          if (sheets[i].href) {
-            console.log(sheets[i].href);
-            continue;
+          let rules;
+          try {
+            rules = sheets[i].rules || sheets[i].cssRules;
+          } catch (e) {
+            console.error(e);
+            console.dir(sheets[i].href);
           }
-          const rules = sheets[i].rules || sheets[i].cssRules;
           for (const r in rules) {
             if (
               Object.prototype.hasOwnProperty.call(rules, r) &&
