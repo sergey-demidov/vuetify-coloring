@@ -10,16 +10,17 @@
   },
   "main": "./src/index.js",
   "files": [
-    "src"
+    "src/components",
+    "src/index.js"
   ],
   "dependencies": {
-    "core-js": "^3.6.5",
     "diff": "^4.0.2",
-    "lodash": "^4.17.20",
-    "vue": "^2.6.11",
-    "vuetify": "^2.2.11"
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
+    "vuetify": "^2.2.11",
+    "core-js": "^3.6.5",
+    "vue": "^2.6.11",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",
@@ -46,5 +47,12 @@
       "vue-cli-service lint",
       "git add"
     ]
+  },
+    "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergey-demidov/vuetify-coloring.git"
   }
 }
