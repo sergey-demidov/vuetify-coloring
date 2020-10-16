@@ -12,15 +12,15 @@ export default new Vuetify({
     themes: {
       dark: {
         primary: "#001122",
-        header: "#223344",
-        panel: "#445566",
-        background: "#667788"
+        header: "#334455",
+        panel: "#667788",
+        background: "#99aabb"
       },
       light: {
         primary: "#001122",
-        header: "#223344",
-        panel: "#445566",
-        background: "#667788"
+        header: "#334455",
+        panel: "#667788",
+        background: "#99aabb"
       }
     }
   }

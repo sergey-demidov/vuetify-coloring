@@ -4,12 +4,18 @@
       v-model="drawer"
       :mini-variant="miniVariant"
       clipped
-      fixed
+      :fixed="fixed"
       app
       color="panel"
     >
       <v-list>
-        <v-list-item v-for="(item, i) in items" :key="i" :href="item.to" exact>
+        <v-list-item
+          v-for="(item, i) in items"
+          :key="i"
+          :to="item.to"
+          router
+          exact
+        >
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -19,7 +25,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar clipped-left fixed color="header">
+    <v-app-bar clipped-left :fixed="fixed" app color="header">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
@@ -29,82 +35,42 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-coloring :presets="presets" :tools="true" />
+      <template v-if="$route.name === 'root'">
+        Click here
+        <v-icon class="ml-3 header animate-arrow">
+          mdi-arrow-right-bold-outline
+        </v-icon>
+        <VColoring :colors="['header', 'panel', 'background', 'primary']" />
+      </template>
+      <template v-if="$route.name === 'presets'">
+        Click here
+        <v-icon class="ml-3 header animate-arrow">
+          mdi-arrow-right-bold-outline
+        </v-icon>
+        <VColoring
+          :colors="['header', 'panel', 'background', 'primary']"
+          :presets="presets"
+        />
+      </template>
+      <template v-if="$route.name === 'disable-picker'">
+        Click here
+        <v-icon class="ml-3 header animate-arrow">
+          mdi-arrow-right-bold-outline
+        </v-icon>
+        <VColoring
+          :colors="['header', 'panel', 'background', 'primary']"
+          :presets="presets"
+          disable-picker
+        />
+      </template>
+      <template v-if="$route.name === 'tools'">
+        <VColoring :presets="presets" :tools="true" />
+      </template>
     </v-app-bar>
     <v-main>
-      <v-container style="max-width: 876px">
+      <v-container style="width: 765px">
         <v-layout column justify-center align-center wrap align-content-center>
-          <v-card class="panel">
-            <v-card-title class="headline">
-              Welcome to the Vuetify + Nuxt.js template
-            </v-card-title>
-            <v-card-text xs12 sm8 md6>
-              <v-expansion-panels>
-                <v-expansion-panel v-for="i of 3" :key="'ep_' + i">
-                  <v-expansion-panel-header color="header"
-                    >Item</v-expansion-panel-header
-                  >
-                  <v-expansion-panel-content color="panel" class="py-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
-
-              <v-simple-table fixed-header style="">
-                <thead>
-                  <tr>
-                    <th class="text-left">
-                      Name
-                    </th>
-                    <th class="text-left">
-                      Calories
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in desserts" :key="item.name">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.calories }}</td>
-                  </tr>
-                </tbody>
-              </v-simple-table>
-              <p>
-                Vuetify is a progressive Material Design component framework for
-                Vue.js. It was designed to empower developers to create amazing
-                applications.
-              </p>
-              <p>
-                For more information on Vuetify, check out the
-                <a
-                  href="https://vuetifyjs.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  documentation </a
-                >.
-              </p>
-              <p>
-                If you have questions, please join the official
-                <a
-                  href="https://chat.vuetifyjs.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="chat"
-                >
-                  discord </a
-                >.
-              </p>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn color="primary" href="/inspire">
-                Continue
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+          <router-view />
         </v-layout>
       </v-container>
     </v-main>
@@ -115,7 +81,7 @@
 </template>
 
 <script>
-import VColoring from "./components/VColoring";
+import VColoring from "./lib/VColoring";
 import Presets from "./lib/presets.json";
 
 export default {
@@ -123,22 +89,34 @@ export default {
   components: {
     VColoring
   },
-
+  mounted() {
+    // console.dir(this.$route);
+  },
   data: () => ({
     presets: Presets,
     clipped: true,
     drawer: true,
-    fixed: false,
+    fixed: true,
     items: [
       {
-        icon: "mdi-apps",
-        title: "Welcome",
-        to: "/"
+        icon: "mdi-rocket-launch",
+        title: "Basic",
+        to: { name: "root" }
       },
       {
         icon: "mdi-chart-bubble",
-        title: "Inspire",
-        to: "/inspire"
+        title: "Presets",
+        to: { name: "presets" }
+      },
+      {
+        icon: "mdi-pen-lock",
+        title: "Disable Picker",
+        to: { name: "disable-picker" }
+      },
+      {
+        icon: "mdi-hammer-screwdriver",
+        title: "Tools",
+        to: { name: "tools" }
       }
     ],
     desserts: [
@@ -168,5 +146,21 @@ export default {
 /*noinspection CssUnresolvedCustomProperty*/
 #app {
   background-color: var(--v-background-base);
+}
+
+.animate-arrow {
+  /*-webkit-animation: slide 0.5s linear infinite;*/
+  animation: slide 0.5s ease-in-out infinite;
+  animation-direction: alternate;
+}
+@keyframes slide {
+  from {
+    padding-left: 0;
+    padding-right: 10px;
+  }
+  to {
+    padding-left: 10px;
+    padding-right: 0;
+  }
 }
 </style>

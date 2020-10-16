@@ -3,20 +3,22 @@
     <v-dialog
       v-model="coloringDialog"
       persistent
-      hide-overlay
+      overlay-color="#0000"
       max-width="550"
       content-class="vc-panel"
     >
       <template v-slot:activator="{ on, attrs }">
-        <v-flex v-bind="attrs" v-on="on">
-          <v-icon
-            size="icon"
-            class="vc-rainbow ma-3"
-            style="border-radius: 50%; padding: 2px; color: #000a"
-          >
-            mdi-brush
-          </v-icon>
-        </v-flex>
+        <!--        <v-flex v-bind="attrs" v-on="on">-->
+        <v-icon
+          v-bind="attrs"
+          v-on="on"
+          size="icon"
+          class="vc-rainbow ma-3"
+          style="border-radius: 50%; padding: 2px; color: #000a; z-index: 100"
+        >
+          mdi-brush
+        </v-icon>
+        <!--        </v-flex>-->
       </template>
       <div id="VuetifyColoring" class="vc-panel">
         <v-card>
@@ -93,7 +95,7 @@
                     v-else
                     class="vc-panel"
                     :value="current[name]"
-                    :disabled="isUndef(name)"
+                    :disabled="isUndef(name) || disablePicker"
                     hide-mode-switch
                     hide-inputs
                     dot-size="7"
@@ -106,6 +108,7 @@
                   <v-switch
                     v-model="dark"
                     dense
+                    :disabled="disablePicker"
                     hide-details
                     class="mt-0 vc-panel"
                   />
@@ -145,17 +148,17 @@
         </v-card>
       </div>
     </v-dialog>
-    <v-coloring-tools v-if="tools" :presets="presets" />
+    <v-coloring-tool v-if="tools" :presets="presets" />
   </div>
 </template>
 
 <script>
 import VDialogPosition from "./VDialogPosition";
-import VColoringTools from "./VColoringTools";
+import VColoringTool from "./VColoringTool";
 
 export default {
   name: "VColoring",
-  components: { VDialogPosition, VColoringTools },
+  components: { VDialogPosition, VColoringTool },
   props: {
     tools: {
       type: Boolean,
@@ -172,29 +175,31 @@ export default {
       default: function() {
         return {};
       }
+    },
+    disablePicker: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      // width: 550,
-      // error: false,
-      // errorMessage: "",
       coloringDialog: false,
       tab: null,
       currentColor: "",
-      // currentRule: "",
       current: {},
-      dark: false,
-      // dark2: false,
-      // colorDebugXXX: true,
-      // colored: [],
-      toolDialog: false,
-      // colored_tab: null,
+      dark: true,
       dialogPosition: ""
-      // style: {}
     };
   },
   computed: {
+    disablePickerStyle() {
+      let cl = ".v-color-picker__controls ";
+      if (this.disablePicker) {
+        return cl + "{ display: none; }";
+      } else {
+        return "";
+      }
+    },
     canvasHeight() {
       let height = this.colors.length * 50;
       return height < 150 ? 150 : height;
@@ -209,7 +214,7 @@ export default {
           `--v-${this.colors[col]}-base: ${this.current[this.colors[col]]};`
         );
       }
-      return ":root { " + vars.join("") + " }";
+      return ":root { " + vars.join("") + " }" + this.disablePickerStyle;
     },
     buttons() {
       const bts = [];
@@ -267,9 +272,13 @@ export default {
     // console.log("end of created");
   },
   mounted() {
+    // this.setStyle()
     // console.dir(this.presets)
   },
   watch: {
+    coloringDialog() {
+      this.setStyle();
+    },
     dark(c) {
       this.dark = c;
       this.$vuetify.theme.dark = c;
@@ -338,7 +347,8 @@ export default {
 
 <style>
 /*noinspection CssUnresolvedCustomProperty*/
-
+#VuetifyColoring .v-sheet,
+#VuetifyColoring .v-item-group.v-window.v-tabs-items,
 #VuetifyColoring div.v-input--switch__track,
 #VuetifyColoring div.v-input--switch__thumb,
 #VuetifyColoring .v-tabs > .v-tabs-bar,
@@ -371,7 +381,7 @@ export default {
 }
 
 .vc-rainbow:hover {
-  box-shadow: #000a 1px 1px 4px;
+  box-shadow: #000 1px 1px 4px;
   background: linear-gradient(
     to right,
     #ff2222,

@@ -1,6 +1,3 @@
-// import Vue from "vue";
-import VColoring from "./components/VColoring";
-// import VColoringTools from "./components/VColoringTools";
-// import VDialogPosition from "./components/VDialogPosition";
+import VColoring from "./lib/VColoring";
 
 export default VColoring;
