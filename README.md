@@ -50,7 +50,6 @@ new Vuetify({
   }
 });
 ```
-## Usage 
 - Import `VColoring` component to your app
 ```javascript
 import VColoring from "vuetify-coloring";
@@ -66,8 +65,27 @@ export default {
 ```
 - Add `VColoring` to your template
 ```html
-<VColoring :colors="colors" />
+ <VColoring :colors="colors" />
 ```
+
+## Usage 
+
+### Assign colors to elements
+The easiest way to assign a color to an element is to use the `color` prop
+```html
+ <v-app-bar color="header">
+```
+
+If the element does not have such a prop, then you can add the `class`
+```html
+ <v-list-item-content class="panel">
+```
+
+If none of the methods worked, 
+then you need to directly add the css rule to your `<style>` section. 
+Integrated [tool](#tools) will help you.
+
+> Background on demo page has been set in this way
 
 #### Presets
 ```javascript
@@ -84,22 +102,23 @@ export default {
 };
 ```
 ```html
-<VColoring
+ <VColoring
     :colors="colors"
     :presets="presets"
-/>
+ />
 ```
 > Example `presets.json` file located in `node_modules/vuetify-coloring/src/lib`
 
 #### Tools
 To enable developer tool feature add `tools` prop to template
 ```html
-<VColoring
+ <VColoring
     :colors="colors"
     :presets="presets"
     tools
-/>
+ />
 ```
+To see how it works, go to [tools demo page](https://sergey-demidov.github.io/vuetify-coloring/#/tools)
 
 ## Props list
 | Name | Type | Default | Description |

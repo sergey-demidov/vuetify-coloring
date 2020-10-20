@@ -31,6 +31,7 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <pre class="mt-4 pl-4 panel">
+import VColoring from "vuetify-coloring";
 import Presets from "./presets.json";
 
 export default {

@@ -142,8 +142,8 @@ export default {
 
 <style>
 /*noinspection CssUnresolvedCustomProperty*/
-#app {
-  background-color: var(--v-background-base);
+.v-main__wrap {
+  background-color: var(--v-background-base) !important;
 }
 
 .animate-arrow {

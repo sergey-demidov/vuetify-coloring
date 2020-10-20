@@ -267,16 +267,23 @@ export default {
     },
     copy(text) {
       // console.dir(text)
-      navigator.clipboard.writeText(text).then(
-        () => {
-          this.snackbarMessage = "Copied";
-          this.snackbar = true;
-        },
-        () => {
-          this.snackbarMessage = "Error";
-          this.snackbar = true;
-        }
-      );
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(
+          () => {
+            this.snackbarMessage = "Copied";
+            this.snackbar = true;
+          },
+          e => {
+            // eslint-disable-next-line no-console
+            console.warn(e);
+            this.snackbarMessage = "Error";
+            this.snackbar = true;
+          }
+        );
+      } else {
+        this.snackbarMessage = "Error: navigator.clipboard undefined";
+        this.snackbar = true;
+      }
     },
     cancel() {
       this.toolDialog = false;
