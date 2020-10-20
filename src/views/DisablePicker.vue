@@ -38,7 +38,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="primary" to="/presets">
+      <v-btn color="primary" to="/tools">
         Continue
       </v-btn>
     </v-card-actions>

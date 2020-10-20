@@ -7,9 +7,10 @@
       <p>
         <ins class="px-1">vuetify-coloring</ins> package gives users the ability
         to change the color of interface elements. This page demonstrates the
-        basic functionality. Click the icon in the upper right corner and try
-        changing the colors of this page in the Coloring dialog box. Below lists
-        the configurations of this example.
+        basic functionality. Elements on this page have custom colors. Click the
+        icon in the upper right corner and try changing the colors of this page
+        in the Coloring dialog box. Below lists the configurations of this
+        example.
       </p>
 
       <v-expansion-panels>
@@ -70,16 +71,7 @@ new Vuetify({
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-      <p class="pt-6">
-        For more information on Vuetify, check out the
-        <a
-          href="https://vuetifyjs.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          vuetify documentation </a
-        >.
-      </p>
+      <template src="../components/Docs.vue"></template>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
