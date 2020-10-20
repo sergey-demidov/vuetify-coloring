@@ -49,7 +49,6 @@
         <VColoring
           :colors="['header', 'panel', 'background', 'primary']"
           :presets="presets"
-          tools
         />
       </template>
       <template v-if="$route.name === 'disable-picker'">
