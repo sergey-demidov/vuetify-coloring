@@ -461,6 +461,7 @@ export default {
   background-color: #00000000 !important;
 }
 
+#VuetifyColoringTool .v-card__actions,
 #VuetifyColoringTool .v-card__text,
 #VuetifyColoringTool .v-expansion-panel,
 #VuetifyColoringTool .v-sheet,
