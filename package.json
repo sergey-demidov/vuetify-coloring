@@ -1,6 +1,6 @@
 {
   "name": "vuetify-coloring",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -56,5 +56,12 @@
     "type": "git",
     "url": "git+https://github.com/sergey-demidov/vuetify-coloring.git"
   },
-  "homepage": "https://sergey-demidov.github.io/vuetify-coloring"
+  "homepage": "https://sergey-demidov.github.io/vuetify-coloring",
+  "keywords": [
+    "spa",
+    "vuetify",
+    "coloring",
+    "paint",
+    "component"
+  ]
 }
