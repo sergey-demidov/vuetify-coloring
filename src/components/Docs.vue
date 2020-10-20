@@ -7,7 +7,7 @@
       target="_blank"
       rel="noopener noreferrer"
     >
-      documentation </a
-    >.
+      documentation
+    </a>
   </p>
 </template>
