@@ -49,6 +49,7 @@
         <VColoring
           :colors="['header', 'panel', 'background', 'primary']"
           :presets="presets"
+          tools
         />
       </template>
       <template v-if="$route.name === 'disable-picker'">
@@ -89,7 +90,7 @@
         </v-row>
       </v-container>
     </v-main>
-    <v-footer absolute app color="header">
+    <v-footer fixed app color="header">
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -142,7 +143,7 @@ export default {
 
 <style>
 /*noinspection CssUnresolvedCustomProperty*/
-.v-main__wrap {
+#app {
   background-color: var(--v-background-base) !important;
 }
 
