@@ -1,9 +1,9 @@
 <template>
-  <v-card class="mt-4" color="panel">
+  <v-card color="panel">
     <v-card-title>
       Presets
     </v-card-title>
-    <v-card-text xs12 sm8 md6>
+    <v-card-text>
       <p>
         Next feature of this app is the ability to define presets. Users can set
         the color of each element or choose a preset. Open the dialog again and
@@ -18,7 +18,7 @@
           <v-expansion-panel-content>
             <pre class="mt-4 pl-4 panel">
 &lt;VColoring
-    :colors="['header', 'panel', 'background', 'primary']"
+    :colors="colors"
     :presets="presets"
 />
 </pre
@@ -38,8 +38,8 @@ export default {
     VColoring
   },
   data: () => ({
-    colors: ['header', 'panel', 'background', 'primary'],
-    presets: Presets
+    colors: ['header', 'panel', 'background', 'primary']
+    presets: Presets,
   })
 };</pre
             >
@@ -102,16 +102,7 @@ export default {
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-      <p class="pt-6">
-        For more information on Vuetify, check out the
-        <a
-          href="https://vuetifyjs.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          vuetify documentation </a
-        >.
-      </p>
+      <vc-docs />
     </v-card-text>
     <v-card-actions>
       <v-spacer />

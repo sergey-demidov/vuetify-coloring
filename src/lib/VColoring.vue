@@ -4,7 +4,7 @@
       v-model="coloringDialog"
       persistent
       overlay-color="#0000"
-      max-width="550"
+      :width="$vuetify.breakpoint.xs ? 360 : 530"
       content-class="vc-panel"
     >
       <template v-slot:activator="{ on, attrs }">
@@ -21,7 +21,7 @@
         <!--        </v-flex>-->
       </template>
       <div id="VuetifyColoring" class="vc-panel">
-        <v-card>
+        <v-card class="vc-panel">
           <v-toolbar class="vc-header">
             <v-toolbar-title>
               Coloring
@@ -31,8 +31,8 @@
               <v-dialog-position></v-dialog-position>
             </v-toolbar-title>
           </v-toolbar>
-          <v-card class="vc-panel" cla>
-            <v-card-text class="pb-0 pt-2 vc-panel">
+          <v-card class="vc-panel py-0 py-sm-2">
+            <v-card-text class="pb-0 pt-2 vc-panel pl-0 pl-sm-2">
               <v-tabs vertical style="display: flex;" class="vc-panel">
                 <v-tab
                   active-class="vc-panel-active"
@@ -45,10 +45,10 @@
                     'text-decoration': isUndef(name) ? 'line-through' : 'none'
                   }"
                   @click="currentColor = current[name]"
-                  class="my-0 py-0 pl-3 vc-panel"
+                  class="my-0 pr-1 pr-sm-2 pl-1 pl-sm-2 vc-panel"
                 >
                   <v-icon
-                    class="mr-2 ml-0"
+                    class="mr-2 ml-1 d-none d-sm-flex"
                     color="#00000099"
                     :style="{ 'background-color': current[name] }"
                     dense
@@ -98,22 +98,23 @@
                     :disabled="isUndef(name) || disablePicker"
                     hide-mode-switch
                     hide-inputs
+                    :width="$vuetify.breakpoint.xs ? 240 : 350"
                     dot-size="7"
-                    width="350"
                     :canvas-height="canvasHeight"
                     @input="setColor(name, $event)"
                   />
                 </v-tab-item>
-                <v-card-actions class="">
+                <v-card-actions class="pl-0 ml-0">
                   <v-switch
                     v-model="dark"
                     dense
                     :disabled="disablePicker"
                     hide-details
-                    class="mt-0 vc-panel"
+                    class="mt-0 ml-1 ml-sm-2 vc-panel"
+                    color="vc-panel"
                   />
                   <v-flex
-                    style="color: #777777; font-weight: 500;"
+                    style="color: #777777; font-weight: 500; z-index: 10;"
                     v-text="themeName.toUpperCase()"
                     class="ml-n1 mt-1"
                   />
@@ -148,7 +149,7 @@
         </v-card>
       </div>
     </v-dialog>
-    <v-coloring-tool v-if="tools" :presets="presets" />
+    <v-coloring-tool v-if="tools" :colors="colors" />
   </div>
 </template>
 
@@ -266,12 +267,12 @@ export default {
       // eslint-disable-next-line no-console
       console.warn(e.message);
     }
-    this.style = document.createElement("style");
-    document.getElementsByTagName("head")[0].appendChild(this.style);
-    this.setStyle();
     // console.log("end of created");
   },
   mounted() {
+    this.style = document.createElement("style");
+    document.getElementsByTagName("head")[0].appendChild(this.style);
+    this.setStyle();
     // this.setStyle()
     // console.dir(this.presets)
   },
@@ -347,9 +348,10 @@ export default {
 
 <style>
 /*noinspection CssUnresolvedCustomProperty*/
-#VuetifyColoring .v-sheet,
+#VuetifyColoring .v-sheet {
+  border-radius: 0 !important;
+}
 #VuetifyColoring .v-item-group.v-window.v-tabs-items,
-#VuetifyColoring div.v-input--switch__track,
 #VuetifyColoring div.v-input--switch__thumb,
 #VuetifyColoring .v-tabs > .v-tabs-bar,
 .vc-panel {
@@ -361,6 +363,10 @@ export default {
 #VuetifyColoring .v-tabs-slider-wrapper {
   background-color: #0000;
   color: #0000;
+}
+
+#VuetifyColoring .v-input--selection-controls__ripple {
+  display: none;
 }
 
 #VuetifyColoring .vc-panel-active {

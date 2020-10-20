@@ -10,10 +10,10 @@
     >
       <div id="VuetifyColoringTool" class="vc-panel">
         <v-toolbar class="vc-header" dense>
-          <v-toolbar-title> Coloring</v-toolbar-title>
+          <v-toolbar-title> Coloring Tool</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-title>
-            <v-dialog-position></v-dialog-position>
+            <v-dialog-position right></v-dialog-position>
           </v-toolbar-title>
         </v-toolbar>
         <v-card class="vc-panel">
@@ -36,6 +36,7 @@
           <v-card-text>
             <v-expansion-panels v-model="colored_tab">
               <v-expansion-panel
+                :disabled="item.css.length === 0 && !item.classPath"
                 v-for="(item, i) in colored"
                 :key="'colored_' + i"
               >
@@ -102,8 +103,11 @@
             </v-expansion-panels>
             <v-flex class="pt-4" style="position: relative">
               <v-flex
-                style="position: absolute; top: 2px; left: 10px; background-color: #eeeeee; padding: 4px;"
+                ref="infoBox"
                 v-text="textareaLabel"
+                class="vc-animate-width"
+                style="font-size: 14px"
+                :style="{ width: textareaLabel.length * 6 + 16 + 'px' }"
               ></v-flex>
               <v-btn
                 @click="important = important ? '' : ' !important'"
@@ -170,7 +174,7 @@ export default {
     colors: {
       type: Array,
       default: function() {
-        return ["header", "panel", "background", "primary"];
+        return [];
       }
     }
   },
@@ -192,7 +196,7 @@ export default {
       colored_tab: null,
       selector: "",
       testCssRule: "",
-      important: "",
+      important: " !important",
       textareaLabel: "",
       snackbar: false,
       snackbarMessage: "",
@@ -229,12 +233,11 @@ export default {
       this.setStyle(n);
     }
   },
-  created() {
+  created() {},
+  mounted() {
     this.style = document.createElement("style");
     document.getElementsByTagName("head")[0].appendChild(this.style);
     this.setLabel();
-  },
-  mounted() {
     document.addEventListener("mouseup", this.getColored);
   },
   destroyed() {
@@ -257,7 +260,7 @@ export default {
           ? "Copy"
           : hover === "important"
           ? "Important"
-          : "Possible selector";
+          : "Possible rule";
     },
     setStyle(style) {
       this.style.innerHTML = style;
@@ -282,52 +285,63 @@ export default {
       this.selector = "";
       this.colored_tab = null;
       this.colored = [];
-      this.important = false;
       this.setStyle("");
+      this.$root.$emit("coloringToolOpened", false);
     },
     getColored(e) {
       if (this.toolDialog || !e.ctrlKey) {
         return;
       }
       let el = e.target;
-      let res = [];
-      res.push({
-        background: getComputedStyle(el).getPropertyValue("background-color"),
-        classPath: this.getClass(el),
-        css: this.css(el, "background-color"),
-        header: "clicked element"
-      });
-      while (el) {
-        let bg = getComputedStyle(el).getPropertyValue("background-color");
-        if (bg.length > 0 && bg !== "rgba(0, 0, 0, 0)") {
-          res.push({
-            background: bg,
-            classPath: this.getClass(el),
-            css: this.css(el, "background-color"),
-            header: "colored by"
-          });
-          this.colored = _.reverse(res);
-          this.currentRule = this.colors[0];
-          this.toolDialog = true;
-          this.colored_tab = 1;
-          return res;
-        } else {
-          el = el.parentNode;
+      setTimeout(() => {
+        this.$root.$emit("coloringToolOpened", true);
+        let res = [];
+        res.push({
+          background: getComputedStyle(el).getPropertyValue("background-color"),
+          classPath: this.getClass(el),
+          css: this.css(el, "background-color"),
+          header: "clicked element"
+        });
+        while (el) {
+          let bg = getComputedStyle(el).getPropertyValue("background-color");
+          if (bg.length > 0 && bg !== "rgba(0, 0, 0, 0)") {
+            res.push({
+              background: bg,
+              classPath: this.getClass(el),
+              css: this.css(el, "background-color"),
+              header: "colored by"
+            });
+            this.colored = _.reverse(res);
+            this.currentRule = this.colors[0];
+            // console.dir(this.colored);
+            this.selector =
+              this.colored[0].css[0].selectorText || this.colored[0].classPath;
+            this.toolDialog = true;
+            this.colored_tab = 0;
+            return res;
+          } else {
+            el = el.parentNode;
+          }
         }
-      }
+      }, 1000);
     },
     getClass(row) {
       const all = document.body.getElementsByTagName("*");
       const rating = {};
       for (const row of all) {
-        if (row.className) {
+        if (row.className && typeof row.className === "string") {
+          // console.dir(row);
           const cl = row.className.split(" ");
           for (const r of cl) {
             rating[r] = !rating[r] ? 1 : rating[r] + 1;
           }
         }
       }
-      if (row.className && row.className.length > 0) {
+      if (
+        row.className &&
+        typeof row.className === "string" &&
+        row.className.length > 0
+      ) {
         let cl = row.className.split(" ");
         cl = cl.sort((a, b) => {
           if (rating[a] === rating[b]) {
@@ -355,7 +369,7 @@ export default {
             rules = sheets[i].rules || sheets[i].cssRules;
           } catch (e) {
             // eslint-disable-next-line no-console
-            console.error(e, sheets[i].href);
+            console.warn(e.message, sheets[i].href);
             continue;
           }
           for (const r in rules) {
@@ -396,7 +410,7 @@ export default {
   border-radius: 7px;
   border-style: solid;
   border-width: 2px;
-  height: 6em;
+  min-height: 6em;
   padding: 1em;
   line-height: 1.2em;
   font-size: 16px;
@@ -407,17 +421,37 @@ export default {
   transition-duration: 1s;
 }
 
+.vc-animate-width {
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  background-color: #eeeeee;
+  /*background-color: yellow;*/
+  padding-left: 4px;
+  padding-right: 4px;
+  transition-property: width, opacity;
+  transition-duration: 0.5s;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+  display: inline;
+}
+
 @keyframes highlight {
-  0% {
+  from {
     background: purple;
   }
-  100% {
+  to {
     background: none;
   }
 }
 
 .blink {
   animation: highlight 1s;
+}
+
+#VuetifyColoringTool .v-btn__content {
+  background-color: #00000000 !important;
 }
 
 #VuetifyColoringTool .v-card__text,
@@ -440,7 +474,8 @@ export default {
   border-color: #777777 !important;
   color: #777777 !important;
 }
-
+/*  prettier-ignore */
+#VuetifyColoringTool .v-data-table > .v-data-table__wrapper > table > tbody > tr,
 #VuetifyColoringTool .v-expansion-panel-content__wrap {
   padding: 4px 12px 4px 12px !important;
   background-color: #eeeeee !important;
@@ -460,8 +495,10 @@ export default {
   min-height: 48px !important;
 }
 
+/*  prettier-ignore */
+#VuetifyColoringTool .v-data-table > .v-data-table__wrapper > table > tbody > tr:hover,
 #VuetifyColoringTool table > tbody > tr:hover {
-  background-color: #dddddd;
+  background-color: #dddddd !important;
 }
 
 #VuetifyColoringTool .v-text-field--solo > .v-input__control > .v-input__slot {

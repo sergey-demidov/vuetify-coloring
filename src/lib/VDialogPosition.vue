@@ -1,8 +1,8 @@
 <template>
-  <div ref="root">
+  <div ref="root" class="d-none d-sm-flex">
     <v-icon
       dense
-      @click="setDialogPosition('left')"
+      @click="setDialogPosition(dirs.left)"
       class="ma-2"
       :class="[contentClass]"
     >
@@ -10,7 +10,7 @@
     </v-icon>
     <v-icon
       dense
-      @click="setDialogPosition('center')"
+      @click="setDialogPosition(dirs.center)"
       class="ma-2"
       :class="[contentClass]"
     >
@@ -18,7 +18,7 @@
     </v-icon>
     <v-icon
       dense
-      @click="setDialogPosition('right')"
+      @click="setDialogPosition(dirs.right)"
       class="ma-2"
       :class="[contentClass]"
     >
@@ -37,20 +37,41 @@ const dirs = Object.freeze({
 export default {
   name: "VDialogPosition",
   props: {
-    "content-class": {
+    contentClass: {
       type: String,
       default: "vdp-header"
+    },
+    left: {
+      type: Boolean,
+      default: false
+    },
+    right: {
+      type: Boolean,
+      default: false
     }
   },
   created() {
+    if (this.right) {
+      this.position = dirs.right;
+    }
+    if (this.left) {
+      this.position = dirs.left;
+    }
+  },
+  mounted() {
     window.addEventListener("resize", this.setDialogPosition);
+    this.$nextTick(() => {
+      this.setDialogPosition(this.position);
+    });
   },
   destroyed() {
     window.removeEventListener("resize", this.setDialogPosition);
   },
   data() {
     return {
-      position: dirs.center
+      dirs: dirs,
+      position: dirs.center,
+      dialog: this.getParentByClass(this.$refs["root"], "v-dialog")
     };
   },
   methods: {
@@ -62,6 +83,7 @@ export default {
         console.error("v-dialog-position works only inside v-dialog tag");
         return;
       }
+      // console.dir(window.getComputedStyle(el)["display"]);
       // if (typeof dir !== "string") {
       //   if (this.position === dirs.center) return;
       //   else dir = this.position;

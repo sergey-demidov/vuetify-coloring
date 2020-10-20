@@ -1,9 +1,9 @@
 <template>
-  <v-card class="mt-4" color="panel">
+  <v-card color="panel">
     <v-card-title>
       Welcome to the Vuetify Coloring package demo
     </v-card-title>
-    <v-card-text xs12 sm8 md6>
+    <v-card-text>
       <p>
         <ins class="px-1">vuetify-coloring</ins> package gives users the ability
         to change the color of interface elements. This page demonstrates the
@@ -19,7 +19,9 @@
             template
           </v-expansion-panel-header>
           <v-expansion-panel-content>
-            <pre class="mt-4 pl-4 panel">&lt;VColoring :colors="colors" /></pre>
+            <pre class="mt-4 pl-4 panel">
+&lt;VColoring :colors="['header', 'panel', 'background', 'primary']" /></pre
+            >
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel class="panel">
@@ -31,10 +33,7 @@
 export default {
   components: {
     VColoring
-  },
-  data: () => ({
-    colors: ['header', 'panel', 'background', 'primary']
-  })
+  }
 };</pre
             >
           </v-expansion-panel-content>
@@ -71,7 +70,7 @@ new Vuetify({
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
-      <template src="../components/Docs.vue"></template>
+      <vc-docs />
     </v-card-text>
     <v-card-actions>
       <v-spacer />

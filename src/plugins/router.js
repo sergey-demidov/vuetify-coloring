@@ -1,8 +1,9 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Basic from "../components/Basic";
-import Presets from "../components/Presets";
-import DisablePicker from "../components/DisablePicker";
+import Basic from "../views/Basic";
+import Presets from "../views/Presets";
+import DisablePicker from "../views/DisablePicker";
+import Tools from "../views/Tools";
 
 Vue.use(VueRouter);
 
@@ -15,6 +16,6 @@ export default new VueRouter({
       name: "disable-picker",
       component: DisablePicker
     },
-    { path: "/tools", name: "tools" }
+    { path: "/tools", name: "tools", component: Tools }
   ]
 });

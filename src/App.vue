@@ -24,15 +24,14 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <template v-slot:append>
+        <v-btn color="panel" block @click.stop="miniVariant = !miniVariant">
+          <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
+        </v-btn>
+      </template>
     </v-navigation-drawer>
     <v-app-bar clipped-left :fixed="fixed" app color="header">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
       <template v-if="$route.name === 'root'">
@@ -64,14 +63,30 @@
         />
       </template>
       <template v-if="$route.name === 'tools'">
-        <VColoring :presets="presets" :tools="true" />
+        <VColoring
+          :colors="['header', 'panel', 'background', 'primary']"
+          tools
+        />
       </template>
     </v-app-bar>
     <v-main>
-      <v-container style="width: 765px">
-        <v-layout column justify-center align-center wrap align-content-center>
-          <router-view />
-        </v-layout>
+      <v-container>
+        <v-row>
+          <v-spacer />
+          <v-col cols="12" xl="7" lg="8" md="10" sm="12">
+            <v-layout
+              column
+              justify-center
+              align-center
+              wrap
+              align-content-center
+              class="xl4 lg4 md6 sm8 xs10"
+            >
+              <router-view />
+            </v-layout>
+          </v-col>
+          <v-spacer />
+        </v-row>
       </v-container>
     </v-main>
     <v-footer absolute app color="header">
@@ -119,25 +134,8 @@ export default {
         to: { name: "tools" }
       }
     ],
-    desserts: [
-      {
-        name: "Frozen Yogurt",
-        calories: 159
-      },
-      {
-        name: "Ice cream sandwich",
-        calories: 237
-      },
-      {
-        name: "Eclair",
-        calories: 262
-      }
-    ],
     miniVariant: false,
-    right: true,
-    rightDrawer: false,
-    title: "Vuetify.js"
-    //
+    title: ""
   })
 };
 </script>
