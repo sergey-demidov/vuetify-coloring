@@ -24,11 +24,11 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <template v-slot:append>
-        <v-btn color="panel" block @click.stop="miniVariant = !miniVariant">
-          <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>
-        </v-btn>
-      </template>
+      <!--      <template v-slot:append>-->
+      <!--        <v-btn color="panel" block @click.stop="miniVariant = !miniVariant">-->
+      <!--          <v-icon>mdi-{{ `chevron-${miniVariant ? "right" : "left"}` }}</v-icon>-->
+      <!--        </v-btn>-->
+      <!--      </template>-->
     </v-navigation-drawer>
     <v-app-bar clipped-left :fixed="fixed" app color="header">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
