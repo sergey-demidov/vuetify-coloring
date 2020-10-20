@@ -1,13 +1,13 @@
 {
   "name": "vuetify-coloring",
-  "version": "0.1.8",
+  "version": "0.2.0",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "release": "standard-version && git push --follow-tags origin master && git subtree push --prefix dist origin gh-pages && npm publish"
+    "release": "standard-version && git push --follow-tags origin master && gh-pages -d dist && npm publish"
   },
   "main": "./src/index.js",
   "files": [
