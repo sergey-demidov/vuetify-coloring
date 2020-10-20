@@ -212,7 +212,9 @@ export default {
       let vars = [];
       for (let col in this.colors) {
         vars.push(
-          `--v-${this.colors[col]}-base: ${this.current[this.colors[col]]};`
+          `--v-${this.colors[col]}-base: ${
+            this.current[this.colors[col]]
+          } !important;`
         );
       }
       return ":root { " + vars.join("") + " }" + this.disablePickerStyle;
