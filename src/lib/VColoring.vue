@@ -52,7 +52,7 @@
                     color="#00000099"
                     :style="{ 'background-color': current[name] }"
                     dense
-                    style="border-radius: 50%; padding: 5px;"
+                    style="border-radius: 50%; padding: 4px;"
                   >
                     mdi-brush
                   </v-icon>
@@ -132,6 +132,11 @@
                 rounded
                 :color="matchScheme(name) ? '#cccccc' : '#eeeeee'"
                 style="color: #777777;"
+                :style="{
+                  'text-decoration': !matchPresetLength(name)
+                    ? 'line-through'
+                    : 'none'
+                }"
                 @click="setColors(name)"
               >
                 {{ name }}
@@ -208,17 +213,6 @@ export default {
     themeName() {
       return this.dark ? "dark" : "light";
     },
-    cssVars() {
-      let vars = [];
-      for (let col in this.colors) {
-        vars.push(
-          `--v-${this.colors[col]}-base: ${
-            this.current[this.colors[col]]
-          } !important;`
-        );
-      }
-      return ":root { " + vars.join("") + " }" + this.disablePickerStyle;
-    },
     buttons() {
       const bts = [];
       const col = this.presets;
@@ -230,53 +224,49 @@ export default {
       return bts;
     }
   },
-  created() {
+  beforeMount() {
     let colors = {};
-    let hasOwnProperty = Object.prototype.hasOwnProperty;
     try {
-      if (typeof localStorage.dark !== "undefined") {
+      if (
+        typeof localStorage.dark !== "undefined" &&
+        typeof JSON.parse(localStorage.dark) === "boolean"
+      ) {
         this.dark = JSON.parse(localStorage.dark);
         this.$vuetify.theme.dark = this.dark;
       } else {
         this.dark = this.$vuetify.theme.dark;
       }
       let theme = this.$vuetify.theme.themes[this.themeName];
+      let storeColors = {};
       if (typeof localStorage.colors !== "undefined") {
-        colors = JSON.parse(localStorage.colors);
-        // console.dir(colors);
-        for (const name of this.colors) {
-          if (
-            this.colors.includes(name) &&
-            hasOwnProperty.call(colors, name) &&
-            colors[name].toString().match(/^#[abcdef\d]{6}$/i)
-          ) {
-            this.current[name] = colors[name].toString();
-            // console.log("get " + name + " " + this.current[name]);
-          }
-        }
+        storeColors = JSON.parse(localStorage.colors);
       }
       for (const name of this.colors) {
-        if (hasOwnProperty.call(theme, name)) {
-          if (typeof this.current[name] === "undefined") {
-            this.current[name] = theme[name];
+        // Set color from vuetify constructor
+        if (name in theme && this.isValidColor(theme[name])) {
+          colors[name] = theme[name];
+          // Set color from local storage
+          if (name in storeColors && this.isValidColor(storeColors[name])) {
+            colors[name] = storeColors[name];
           }
-          // console.log("set " + name + " " + this.current[name]);
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `color ${name} not properly defined in vuetify constructor`
+          );
+          colors[name] = "#FF00FF";
         }
-        this.current = JSON.parse(JSON.stringify(this.current));
-        // console.dir(this.current);
       }
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn(e.message);
+      console.error(e.message);
     }
-    // console.log("end of created");
+    this.current = colors;
   },
   mounted() {
     this.style = document.createElement("style");
     document.getElementsByTagName("head")[0].appendChild(this.style);
     this.setStyle();
-    // this.setStyle()
-    // console.dir(this.presets)
   },
   watch: {
     coloringDialog() {
@@ -289,6 +279,17 @@ export default {
     }
   },
   methods: {
+    isValidColor(c) {
+      return !!(typeof c === "string" && c.match(/^#[abcdef\d]{6}$/i));
+    },
+    cssVars() {
+      let vars = [];
+      for (let col in this.current) {
+        vars.push(`--v-${col}-base: ${this.current[col]} !important;`);
+      }
+      // console.dir(vars);
+      return ":root { " + vars.join("") + " }" + this.disablePickerStyle;
+    },
     matchPresetLength(name) {
       if (
         this.presets[name].colors.length !== Object.keys(this.current).length
@@ -307,9 +308,18 @@ export default {
         let colors = preset.colors.slice();
         for (const i in this.colors) {
           if (
-            Object.prototype.hasOwnProperty.call(this.current, this.colors[i])
+            Object.prototype.hasOwnProperty.call(
+              this.current,
+              this.colors[i]
+            ) &&
+            this.isValidColor(colors[i])
           ) {
             this.current[this.colors[i]] = colors[i];
+          } else {
+            // eslint-disable-next-line no-console
+            console.warn(
+              `cant set color ${this.colors[i]} to value '${colors[i]}'`
+            );
           }
         }
       }
@@ -344,7 +354,7 @@ export default {
       localStorage.dark = JSON.stringify(this.dark);
     },
     setStyle() {
-      this.style.innerHTML = this.cssVars;
+      this.style.innerHTML = this.cssVars();
       // console.dir(this.style);
     },
     setColor(name, c) {
