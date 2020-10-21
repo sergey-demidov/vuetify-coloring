@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "release": "npm run build && standard-version && git push --follow-tags origin master && gh-pages -d dist && npm publish"
+    "release": "standard-version && git push --follow-tags origin master && npm publish && npm run build && gh-pages -d dist"
   },
   "main": "./src/index.js",
   "files": [
