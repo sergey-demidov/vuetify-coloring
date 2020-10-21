@@ -294,7 +294,7 @@ export default {
         this.presets[name].colors.length !== Object.keys(this.current).length
       ) {
         // eslint-disable-next-line no-console
-        console.warn("preset colors length mismatch");
+        console.warn(`preset ${name} colors length mismatch`);
         return false;
       }
       return true;
