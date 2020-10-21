@@ -168,7 +168,7 @@ export default {
     colors: {
       type: Array,
       default: function() {
-        return ["header", "panel", "background", "primary"];
+        return [];
       }
     },
     presets: {
