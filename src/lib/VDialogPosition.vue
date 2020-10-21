@@ -75,12 +75,12 @@ export default {
     };
   },
   methods: {
-    setDialogPosition: function(dir) {
+    setDialogPosition(dir) {
       // console.log(dir);
       let el = this.getParentByClass(this.$refs["root"], "v-dialog");
       if (!el) {
         // eslint-disable-next-line no-console
-        console.error("v-dialog-position works only inside v-dialog tag");
+        console.warn("v-dialog-position works only inside v-dialog tag");
         return;
       }
       // console.dir(window.getComputedStyle(el)["display"]);
