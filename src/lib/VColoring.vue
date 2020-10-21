@@ -289,7 +289,18 @@ export default {
     }
   },
   methods: {
+    matchPresetLength(name) {
+      if (
+        this.presets[name].colors.length !== Object.keys(this.current).length
+      ) {
+        // eslint-disable-next-line no-console
+        console.warn("preset colors length mismatch");
+        return false;
+      }
+      return true;
+    },
     setColors(name) {
+      if (!this.matchPresetLength(name)) return;
       let preset = this.presets[name];
       this.dark = preset.dark;
       if (Array.isArray(preset.colors)) {
@@ -309,6 +320,7 @@ export default {
       if (this.presets[name].dark !== this.dark) {
         return false;
       }
+      if (!this.matchPresetLength(name)) return false;
       for (const i in this.colors) {
         if (
           Object.prototype.hasOwnProperty.call(this.current, this.colors[i])
