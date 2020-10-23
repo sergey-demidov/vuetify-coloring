@@ -202,7 +202,8 @@ export default {
       snackbarMessage: "",
       dialogPosition: "",
       style: {},
-      strGenerator: ""
+      strGenerator: "",
+      selected: {}
     };
   },
   computed: {
@@ -294,12 +295,15 @@ export default {
       this.colored = [];
       this.setStyle("");
       this.$root.$emit("coloringToolOpened", false);
+      this.selected.classList.remove("border");
     },
     getColored(e) {
       if (this.toolDialog || !e.ctrlKey) {
         return;
       }
       let el = e.target;
+      el.classList.add("border");
+      this.selected = el;
       setTimeout(() => {
         this.$root.$emit("coloringToolOpened", true);
         let res = [];
@@ -410,6 +414,13 @@ export default {
 
 <style>
 /*noinspection CssUnresolvedCustomProperty*/
+
+.border {
+  border-color: #ff00ff;
+  border-width: 1px;
+  border-style: solid;
+  box-sizing: content-box;
+}
 
 .vc-prewrap {
   white-space: pre-wrap;
