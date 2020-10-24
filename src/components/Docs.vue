@@ -3,7 +3,7 @@
     For more information on <ins class="px-1">vuetify-coloring</ins>, check out
     the
     <a
-      href="https://github.com/sergey-demidov/vuetify-coloring"
+      href="https://github.com/sergey-demidov/vuetify-coloring#readme"
       target="_blank"
       rel="noopener noreferrer"
     >

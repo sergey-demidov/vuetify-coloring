@@ -19,13 +19,28 @@
       <v-expansion-panels>
         <v-expansion-panel class="panel">
           <v-expansion-panel-header color="header">
-            template
+            template 1
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <pre class="mt-4 pl-4 panel">
 &lt;VColoring
     :colors="['header', 'panel', 'background', 'primary']"
-    tools
+    tool
+/></pre
+            >
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel class="panel">
+          <v-expansion-panel-header color="header">
+            template 2
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <pre class="mt-4 pl-4 panel">
+&lt;VColoring
+    :colors="['header', 'panel', 'background', 'primary']"
+/>
+&lt;VColoringTool
+    :colors="['header', 'panel', 'background', 'primary']"
 /></pre
             >
           </v-expansion-panel-content>
@@ -41,12 +56,8 @@
           </tr>
         </thead>
         <tbody class="clickable">
-          <tr
-            @mouseover="hovered = true"
-            @mouseout="hovered = false"
-            @click="clicked = toolOpened && !clicked ? false : true"
-          >
-            <td class="" ref="uncolored" v-text="label"></td>
+          <tr @click="clicked = toolOpened && !clicked ? false : true">
+            <td ref="uncolored" v-text="label" />
           </tr>
         </tbody>
       </v-simple-table>
@@ -56,9 +67,9 @@
       <v-spacer />
       <v-btn
         color="primary"
-        href="https://github.com/sergey-demidov/vuetify-coloring#vuetify-coloring"
+        href="https://github.com/sergey-demidov/vuetify-coloring#readme"
       >
-        finish
+        return
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -68,9 +79,7 @@
 export default {
   data: () => ({
     clicked: false,
-    toolOpened: false,
-    hovered: false,
-    uncolored: "Ctrl-Click me and take the mouse somewhere else"
+    toolOpened: false
   }),
   mounted() {
     this.$root.$on("coloringToolOpened", this.setToolState);
@@ -90,9 +99,7 @@ export default {
     label() {
       return this.toolOpened && this.clicked
         ? "This element reflects changes in the tool dialog"
-        : !this.hovered
-        ? "Ctrl-Click me and take the mouse somewhere else"
-        : "or Ctrl-Click me and leave mouse over to set :hover state";
+        : "Ctrl-Click me";
     }
   }
 };

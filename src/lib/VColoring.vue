@@ -154,7 +154,7 @@
         </v-card>
       </div>
     </v-dialog>
-    <v-coloring-tool v-if="tools" :colors="colors" />
+    <v-coloring-tool v-if="tool" :colors="colors" />
   </div>
 </template>
 
@@ -166,7 +166,7 @@ export default {
   name: "VColoring",
   components: { VDialogPosition, VColoringTool },
   props: {
-    tools: {
+    tool: {
       type: Boolean,
       default: false
     },

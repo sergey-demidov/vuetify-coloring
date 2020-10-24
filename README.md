@@ -87,7 +87,7 @@ Integrated [tool](#tools) will help you.
 
 > Background on demo page has been set in this way
 
-#### Presets
+### Presets
 ```javascript
 import Presets from "./presets.json";
 
@@ -109,23 +109,27 @@ export default {
 ```
 > Example `presets.json` file located in `node_modules/vuetify-coloring/src/lib`
 
-#### Tools
+### Developer tool
 To enable developer tool feature add `tools` prop to template
 ```html
  <VColoring
     :colors="colors"
     :presets="presets"
-    tools
+    tool
  />
 ```
-To see how it works, go to [tools demo page](https://sergey-demidov.github.io/vuetify-coloring/#/tools)
+or separately
+``` html
+<VColoringTool :colors="colors" />
+```
+To see how it works, go to [tool demo page](https://sergey-demidov.github.io/vuetify-coloring/#/tools)
 
-## Props list
+### VColoring props list
 | Name | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
 |colors|Array | []      | List of custom colors |
 |presets|Object| {}     | Presets |
-|tools |Boolean| false  | Enables tool feature |
+|tool   |Boolean| false  | Enables tool feature |
 |disable-picker|Boolean | false | Disables color picker |
 
 
