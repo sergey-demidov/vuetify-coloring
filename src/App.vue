@@ -65,7 +65,7 @@
       <template v-if="$route.name === 'tools'">
         <VColoring
           :colors="['header', 'panel', 'background', 'primary']"
-          tools
+          tool
         />
       </template>
     </v-app-bar>
