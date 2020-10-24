@@ -66,7 +66,14 @@
                           @click="select(item.elClass, item.el)"
                         >
                           <td style="width: 42px;" class="vcp-panel px-1">
-                            class
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-sheet v-bind="attrs" v-on="on">
+                                  elem
+                                </v-sheet>
+                              </template>
+                              <span>element css selector</span>
+                            </v-tooltip>
                           </td>
                           <td class="vcp-panel px-0">
                             <pre style="max-width: 470px; overflow: hidden">{{
@@ -77,14 +84,18 @@
                         </tr>
                         <tr
                           class="clickable"
-                          v-if="item.classPath"
-                          @click="
-                            selector = item.classPath;
-                            selected = item.el;
-                          "
+                          v-if="item.classPath && colored.length > 1"
+                          @click="select(item.classPath, item.el)"
                         >
                           <td style="width: 42px;" class="vcp-panel px-1">
-                            path
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-sheet v-bind="attrs" v-on="on">
+                                  path
+                                </v-sheet>
+                              </template>
+                              <span>css path from colored parent</span>
+                            </v-tooltip>
                           </td>
                           <td class="vcp-panel px-0">
                             <pre style="max-width: 470px; overflow: hidden">{{
@@ -97,13 +108,17 @@
                           class="clickable"
                           v-for="(css, c) in item.css"
                           :key="'css_' + c"
-                          @click="
-                            selector = css.selectorText;
-                            selected = item.el;
-                          "
+                          @click="select(css.selectorText, item.el)"
                         >
                           <td style="width: 42px" class="vcp-panel px-1">
-                            css
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-sheet v-bind="attrs" v-on="on">
+                                  css
+                                </v-sheet>
+                              </template>
+                              <span>applied css rule</span>
+                            </v-tooltip>
                           </td>
                           <td class="vcp-panel px-0">
                             <pre style="max-width: 470px; overflow: hidden">{{
@@ -139,22 +154,29 @@
                 style="font-size: 14px"
                 :style="{ width: textareaLabel.length * 6 + 16 + 'px' }"
               ></v-flex>
-              <v-btn
-                @click="important = important ? '' : ' !important'"
-                icon
-                style="position: absolute; right: 0; top: 0"
-                class="mx-0 my-4"
-                title="Important"
-              >
-                <v-icon
-                  style="background-color: #aaaaaa; border-radius: 50%"
-                  :style="{ color: important ? 'red' : '#777777' }"
-                  @mouseenter="setLabel('important')"
-                  @mouseleave="setLabel()"
-                >
-                  mdi-exclamation
-                </v-icon>
-              </v-btn>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="important = important ? '' : ' !important'"
+                    icon
+                    style="position: absolute; right: 0; top: 0"
+                    class="mx-0 my-4"
+                  >
+                    <v-icon
+                      style="background-color: #aaaaaa; border-radius: 50%"
+                      :style="{ color: important ? 'red' : '#777777' }"
+                      @mouseenter="setLabel('important')"
+                      @mouseleave="setLabel()"
+                    >
+                      mdi-exclamation
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span v-text="important ? 'clear !important' : 'set !important'"></span>
+              </v-tooltip>
+
               <v-flex
                 @click="copy(cssGenerator)"
                 class="vc-prewrap clickable"
@@ -215,7 +237,7 @@ export default {
       errorMessage: "",
       coloringDialog: false,
       tab: null,
-      currentColor: "",
+      currentColor: this.colors[0] || "",
       current: {},
       dark: false,
       dark2: false,
@@ -248,8 +270,6 @@ export default {
   },
   watch: {
     selected(elNew, elOld) {
-      console.dir(elNew);
-      console.dir(elOld);
       if (elOld.classList) {
         elOld.classList.remove("border");
       }
@@ -310,7 +330,6 @@ export default {
       this.style.innerHTML = style;
     },
     copy(text) {
-      // console.dir(text)
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(
           () => {
@@ -332,7 +351,7 @@ export default {
 
     cancel() {
       this.toolDialog = false;
-      this.currentColor = "";
+      // this.currentColor = "";
       this.testCssRule = "";
       this.selector = "";
       this.colored_tab = null;
@@ -353,12 +372,9 @@ export default {
         let background;
         let classPath = [];
         do {
-          classPath.push(
-            el.tagName.toLowerCase() +
-              (el.id.length > 0 ? `#${el.id}` : "") +
-              this.getClass(el)
-          );
-          console.dir(el);
+          let self = this.getClass(el);
+          classPath.push(self);
+          // console.dir(el);
           background = getComputedStyle(el).getPropertyValue(
             "background-color"
           );
@@ -366,7 +382,7 @@ export default {
             res.push({
               el,
               background,
-              elClass: this.getClass(el),
+              elClass: self,
               css: this.getCSS(el, "background-color"),
               header: res[0] ? "colored by" : "clicked element",
               classPath: ""
@@ -375,45 +391,12 @@ export default {
           el = el.parentNode;
         } while (el && background === "rgba(0, 0, 0, 0)");
         res[0].classPath = _.reverse(classPath).join(" > ");
-        // this.colored = _.reverse(res);
         this.colored = res;
-        this.currentColor = this.colors[0];
+        // this.currentColor = this.colors[0];
         this.colored_tab = 0;
         this.selector = res[0].classPath;
         this.selected = res[0].el;
-        //   this.colored[0].css[0].selectorText || this.colored[0].elClass;
         this.toolDialog = true;
-
-        // res.push({
-        //   el,
-        //   background: getComputedStyle(el).getPropertyValue("background-color"),
-        //   elClass: this.getClass(el),
-        //   css: this.css(el, "background-color"),
-        //   header: "clicked element"
-        // });
-        // while (el) {
-        //   let bg = getComputedStyle(el).getPropertyValue("background-color");
-        //   if (bg.length > 0 && bg !== "rgba(0, 0, 0, 0)") {
-        //     res.push({
-        //       el,
-        //       background: bg,
-        //       elClass: this.getClass(el),
-        //       css: this.css(el, "background-color"),
-        //       header: "colored by"
-        //     });
-        //     this.colored = _.reverse(res);
-        //     this.currentColor = this.colors[0];
-        //     // console.dir(this.colored);
-        //     this.selector =
-        //       this.colored[0].css[0].selectorText || this.colored[0].elClass;
-        //     this.toolDialog = true;
-        //     this.colored_tab = 0;
-        //     this.selected = el;
-        //     return res;
-        //   } else {
-        //     el = el.parentNode;
-        //   }
-        // }
       }, 1000);
     },
     getClass(el) {
@@ -428,6 +411,8 @@ export default {
           }
         }
       }
+      let self =
+        el.tagName.toLowerCase() + (el.id.length > 0 ? `#${el.id}` : "");
       if (
         el.className &&
         typeof el.className === "string" &&
@@ -441,9 +426,9 @@ export default {
           return rating[a] > rating[b] ? -1 : 1;
         });
         cl = _.pull(cl, "theme--dark", "theme--light");
-        return "." + _.uniq(cl).join(".");
+        return self + "." + _.uniq(cl).join(".");
       } else {
-        return "";
+        return self;
       }
     },
     getCSS(el, prop) {

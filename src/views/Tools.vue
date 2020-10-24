@@ -56,7 +56,7 @@
       <v-spacer />
       <v-btn
         color="primary"
-        href="https://github.com/sergey-demidov/vuetify-coloring"
+        href="https://github.com/sergey-demidov/vuetify-coloring#vuetify-coloring"
       >
         finish
       </v-btn>
