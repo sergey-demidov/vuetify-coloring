@@ -8,25 +8,25 @@
       max-width="600px"
       style="background-color: #eeeeee;"
     >
-      <div id="VuetifyColoringTool" class="vc-panel">
-        <v-toolbar class="vc-header" dense>
+      <div id="VuetifyColoringTool" class="vcp-panel">
+        <v-toolbar class="vcp-header" dense>
           <v-toolbar-title> Coloring Tool</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-title>
             <v-dialog-position right></v-dialog-position>
           </v-toolbar-title>
         </v-toolbar>
-        <v-card class="vc-panel">
-          <v-card-actions class="pt-4 pb-0 vc-panel">
+        <v-card class="vcp-panel">
+          <v-card-actions class="pt-4 pb-0 vcp-panel">
             <v-spacer />
             <v-btn
               v-for="name in colors"
               :key="'preset_' + name"
               small
               rounded
-              :color="currentRule === name ? '#cccccc' : '#eeeeee'"
+              :color="currentColor === name ? '#cccccc' : '#eeeeee'"
               style="color: #777777;"
-              @click="currentRule = name"
+              @click="currentColor = name"
             >
               {{ name }}
             </v-btn>
@@ -36,11 +36,16 @@
           <v-card-text>
             <v-expansion-panels v-model="colored_tab">
               <v-expansion-panel
-                :disabled="item.css.length === 0 && !item.classPath"
+                :disabled="
+                  item.css.length === 0 &&
+                    !item.elClass &&
+                    !item.classPath &&
+                    !item.id
+                "
                 v-for="(item, i) in colored"
                 :key="'colored_' + i"
               >
-                <v-expansion-panel-header class="vc-header py-0">
+                <v-expansion-panel-header class="vcp-header py-0">
                   <v-flex>
                     <v-icon
                       style="border-radius: 50%; padding: 2px; color: #777777"
@@ -51,36 +56,61 @@
                     {{ item.header }}
                   </v-flex>
                 </v-expansion-panel-header>
-                <v-expansion-panel-content class="vc-panel py-0">
-                  <v-simple-table class="vc-panel">
+                <v-expansion-panel-content class="vcp-panel py-0">
+                  <v-simple-table class="vcp-panel">
                     <template v-slot:default>
                       <tbody>
                         <tr
                           class="clickable"
-                          v-if="item.classPath"
-                          @click="selector = item.classPath"
+                          v-if="item.elClass"
+                          @click="select(item.elClass, item.el)"
                         >
-                          <td style="width: 42px;" class="px-1">class</td>
-                          <td class="px-0">
+                          <td style="width: 42px;" class="vcp-panel px-1">
+                            class
+                          </td>
+                          <td class="vcp-panel px-0">
+                            <pre style="max-width: 470px; overflow: hidden">{{
+                              item.elClass
+                            }}</pre>
+                          </td>
+                          <td class="vcp-panel px-1"></td>
+                        </tr>
+                        <tr
+                          class="clickable"
+                          v-if="item.classPath"
+                          @click="
+                            selector = item.classPath;
+                            selected = item.el;
+                          "
+                        >
+                          <td style="width: 42px;" class="vcp-panel px-1">
+                            path
+                          </td>
+                          <td class="vcp-panel px-0">
                             <pre style="max-width: 470px; overflow: hidden">{{
                               item.classPath
                             }}</pre>
                           </td>
-                          <td class="px-1"></td>
+                          <td class="vcp-panel px-1"></td>
                         </tr>
                         <tr
                           class="clickable"
                           v-for="(css, c) in item.css"
                           :key="'css_' + c"
-                          @click="selector = css.selectorText"
+                          @click="
+                            selector = css.selectorText;
+                            selected = item.el;
+                          "
                         >
-                          <td style="width: 42px" class="px-1">css</td>
-                          <td class="px-0">
+                          <td style="width: 42px" class="vcp-panel px-1">
+                            css
+                          </td>
+                          <td class="vcp-panel px-0">
                             <pre style="max-width: 470px; overflow: hidden">{{
                               folding(css.cssText)
                             }}</pre>
                           </td>
-                          <td class="px-1">
+                          <td class="vcp-panel px-1">
                             <v-icon
                               v-if="
                                 css.style.getPropertyPriority(
@@ -139,7 +169,7 @@
 
           <v-card-actions class="pt-0 pb-3">
             <v-spacer />
-            <v-btn class="pt-0 vc-panel" text @click="cancel()">
+            <v-btn class="pt-0 vcp-panel" text @click="cancel()">
               return
             </v-btn>
             <v-spacer />
@@ -186,7 +216,6 @@ export default {
       coloringDialog: false,
       tab: null,
       currentColor: "",
-      currentRule: "",
       current: {},
       dark: false,
       dark2: false,
@@ -208,9 +237,9 @@ export default {
   },
   computed: {
     cssGenerator() {
-      if (this.selector && this.currentRule) {
+      if (this.selector && this.currentColor) {
         return `${this.selector} {
-    background-color: var(--v-${this.currentRule}-base)${this.important};
+    background-color: var(--v-${this.currentColor}-base)${this.important};
 }`;
       } else {
         return " ";
@@ -218,6 +247,16 @@ export default {
     }
   },
   watch: {
+    selected(elNew, elOld) {
+      console.dir(elNew);
+      console.dir(elOld);
+      if (elOld.classList) {
+        elOld.classList.remove("border");
+      }
+      if (elNew.classList) {
+        elNew.classList.add("border");
+      }
+    },
     cssGenerator(n, o) {
       // console.dir(Diff.diffWords(o, n));
       let res = "";
@@ -245,6 +284,10 @@ export default {
     document.removeEventListener("mouseup", this.getColored);
   },
   methods: {
+    select(s, el) {
+      this.selector = s;
+      this.selected = el;
+    },
     folding(str) {
       // console.dir(str);
       return str
@@ -261,7 +304,7 @@ export default {
           ? "Copy"
           : hover === "important"
           ? "Important"
-          : "Possible rule";
+          : "CSS rule";
     },
     setStyle(style) {
       this.style.innerHTML = style;
@@ -286,9 +329,10 @@ export default {
         this.snackbar = true;
       }
     },
+
     cancel() {
       this.toolDialog = false;
-      this.currentRule = "";
+      this.currentColor = "";
       this.testCssRule = "";
       this.selector = "";
       this.colored_tab = null;
@@ -296,64 +340,100 @@ export default {
       this.setStyle("");
       this.$root.$emit("coloringToolOpened", false);
       this.selected.classList.remove("border");
+      this.selected = {};
     },
     getColored(e) {
       if (this.toolDialog || !e.ctrlKey) {
         return;
       }
       let el = e.target;
-      el.classList.add("border");
-      this.selected = el;
       setTimeout(() => {
         this.$root.$emit("coloringToolOpened", true);
         let res = [];
-        res.push({
-          background: getComputedStyle(el).getPropertyValue("background-color"),
-          classPath: this.getClass(el),
-          css: this.css(el, "background-color"),
-          header: "clicked element"
-        });
-        while (el) {
-          let bg = getComputedStyle(el).getPropertyValue("background-color");
-          if (bg.length > 0 && bg !== "rgba(0, 0, 0, 0)") {
+        let background;
+        let classPath = [];
+        do {
+          classPath.push(
+            el.tagName.toLowerCase() +
+              (el.id.length > 0 ? `#${el.id}` : "") +
+              this.getClass(el)
+          );
+          console.dir(el);
+          background = getComputedStyle(el).getPropertyValue(
+            "background-color"
+          );
+          if (background !== "rgba(0, 0, 0, 0)" || !res[0]) {
             res.push({
-              background: bg,
-              classPath: this.getClass(el),
-              css: this.css(el, "background-color"),
-              header: "colored by"
+              el,
+              background,
+              elClass: this.getClass(el),
+              css: this.getCSS(el, "background-color"),
+              header: res[0] ? "colored by" : "clicked element",
+              classPath: ""
             });
-            this.colored = _.reverse(res);
-            this.currentRule = this.colors[0];
-            // console.dir(this.colored);
-            this.selector =
-              this.colored[0].css[0].selectorText || this.colored[0].classPath;
-            this.toolDialog = true;
-            this.colored_tab = 0;
-            return res;
-          } else {
-            el = el.parentNode;
           }
-        }
+          el = el.parentNode;
+        } while (el && background === "rgba(0, 0, 0, 0)");
+        res[0].classPath = _.reverse(classPath).join(" > ");
+        // this.colored = _.reverse(res);
+        this.colored = res;
+        this.currentColor = this.colors[0];
+        this.colored_tab = 0;
+        this.selector = res[0].classPath;
+        this.selected = res[0].el;
+        //   this.colored[0].css[0].selectorText || this.colored[0].elClass;
+        this.toolDialog = true;
+
+        // res.push({
+        //   el,
+        //   background: getComputedStyle(el).getPropertyValue("background-color"),
+        //   elClass: this.getClass(el),
+        //   css: this.css(el, "background-color"),
+        //   header: "clicked element"
+        // });
+        // while (el) {
+        //   let bg = getComputedStyle(el).getPropertyValue("background-color");
+        //   if (bg.length > 0 && bg !== "rgba(0, 0, 0, 0)") {
+        //     res.push({
+        //       el,
+        //       background: bg,
+        //       elClass: this.getClass(el),
+        //       css: this.css(el, "background-color"),
+        //       header: "colored by"
+        //     });
+        //     this.colored = _.reverse(res);
+        //     this.currentColor = this.colors[0];
+        //     // console.dir(this.colored);
+        //     this.selector =
+        //       this.colored[0].css[0].selectorText || this.colored[0].elClass;
+        //     this.toolDialog = true;
+        //     this.colored_tab = 0;
+        //     this.selected = el;
+        //     return res;
+        //   } else {
+        //     el = el.parentNode;
+        //   }
+        // }
       }, 1000);
     },
-    getClass(row) {
+    getClass(el) {
       const all = document.body.getElementsByTagName("*");
       const rating = {};
-      for (const row of all) {
-        if (row.className && typeof row.className === "string") {
-          // console.dir(row);
-          const cl = row.className.split(" ");
+      for (const el of all) {
+        if (el.className && typeof el.className === "string") {
+          // console.dir(el);
+          const cl = el.className.split(" ");
           for (const r of cl) {
             rating[r] = !rating[r] ? 1 : rating[r] + 1;
           }
         }
       }
       if (
-        row.className &&
-        typeof row.className === "string" &&
-        row.className.length > 0
+        el.className &&
+        typeof el.className === "string" &&
+        el.className.length > 0
       ) {
-        let cl = row.className.split(" ");
+        let cl = el.className.split(" ");
         cl = cl.sort((a, b) => {
           if (rating[a] === rating[b]) {
             return 0;
@@ -366,7 +446,7 @@ export default {
         return "";
       }
     },
-    css(el, prop) {
+    getCSS(el, prop) {
       let dummy = document.createElement(el.tagName);
       dummy.style.display = "none";
       document.body.appendChild(dummy);
@@ -390,11 +470,6 @@ export default {
               rules[r].style.getPropertyValue(prop)
             ) {
               dummy.style[prop] = rules[r].style.getPropertyValue(prop);
-              // console.dir(rules[r].style[prop]);
-              // console.dir(getComputedStyle(el).getPropertyValue(prop));
-              // console.dir(dummy.style[prop]);
-              // console.dir(getComputedStyle(dummy).getPropertyValue(prop));
-              // console.dir(getComputedStyle(dummy));
               if (
                 getComputedStyle(el).getPropertyValue(prop) ===
                 getComputedStyle(dummy).getPropertyValue(prop)
@@ -416,10 +491,27 @@ export default {
 /*noinspection CssUnresolvedCustomProperty*/
 
 .border {
-  border-color: #ff00ff;
-  border-width: 1px;
-  border-style: solid;
-  box-sizing: content-box;
+  /*border-color: #ff00ff;*/
+  /*border-width: 1px;*/
+  /*border-style: solid;*/
+  z-index: 100;
+  outline-width: 1px !important;
+  outline-style: dotted !important;
+  outline-offset: -1px !important;
+  animation: border-highlight 0.4s infinite;
+  /*box-sizing: content-box !important;*/
+}
+
+@keyframes border-highlight {
+  0% {
+    outline-color: #ee00eeee;
+  }
+  50% {
+    outline-color: #ee00ee00;
+  }
+  100% {
+    outline-color: #ee00eeee;
+  }
 }
 
 .vc-prewrap {
@@ -476,7 +568,7 @@ export default {
 #VuetifyColoringTool .v-card__text,
 #VuetifyColoringTool .v-expansion-panel,
 #VuetifyColoringTool .v-sheet,
-.vc-panel {
+.vcp-panel {
   background-color: #eeeeee !important;
   color: #777777 !important;
   border-color: #eeeeee !important;
@@ -525,7 +617,7 @@ export default {
 }
 
 #VuetifyColoringTool .v-toolbar__content,
-.vc-header {
+.vcp-header {
   background-color: #cccccc !important;
   color: #777777 !important;
 }
