@@ -107,7 +107,7 @@ export default {
     :presets="presets"
  />
 ```
-> Example `presets.json` file located in `node_modules/vuetify-coloring/src/lib`
+> Example `presets.json` file is located here: `node_modules/vuetify-coloring/src/lib/presets.json`
 
 ### Developer tool
 To enable developer tool feature add `tools` prop to template
@@ -119,21 +119,25 @@ To enable developer tool feature add `tools` prop to template
  />
 ```
 or separately
+> in this case dont forget to import it too
 ``` html
 <VColoringTool :colors="colors" />
 ```
-> in this case dont forget to import it too
 
->To see how it works, go to [tool demo page](https://sergey-demidov.github.io/vuetify-coloring/#/tools)
+> To see how it works, go to [tool demo page](https://sergey-demidov.github.io/vuetify-coloring/#/tools)
 
 ### VColoring props list
 | Name | Type | Default | Description |
-|:-----|:-----|:--------|:------------|
+|:-------------|:-----|:--------|:------------|
 |colors|Array | []      | List of custom colors |
 |presets|Object| {}     | Presets |
 |tool   |Boolean| false  | Enables tool feature |
 |disable-picker|Boolean | false | Disables color picker |
 
+### VColoringTool props list
+| Name | Type | Default | Description |
+|:-------------|:-----|:--------|:------------|
+| colors | Array | []      | List of custom colors |
 
 
 Copyright (c) Sergey Demidov <sergey.k.demidov@gmail.com>

@@ -27,7 +27,7 @@
   </div>
 </template>
 
-<script>
+<script type="module">
 const dirs = Object.freeze({
   left: "left",
   right: "right",

@@ -158,7 +158,7 @@
   </div>
 </template>
 
-<script>
+<script type="module">
 import VDialogPosition from "./VDialogPosition";
 import VColoringTool from "./VColoringTool";
 
@@ -295,7 +295,7 @@ export default {
         this.presets[name].colors.length !== Object.keys(this.current).length
       ) {
         // eslint-disable-next-line no-console
-        console.warn(`preset ${name} colors length mismatch`);
+        console.warn(`preset ${name} colors length mismatch ( ${this.presets[name].colors.length} !== ${Object.keys(this.current).length} )`);
         return false;
       }
       return true;
