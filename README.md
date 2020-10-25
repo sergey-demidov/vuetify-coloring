@@ -25,7 +25,7 @@ new Vuetify({
   },
 })
 ```
-- Define custom colors for groups of elements
+- Define custom colors for groups of elements. For example `header`, `panel` and `background` 
 ```javascript
 new Vuetify({
   theme: {
@@ -122,7 +122,9 @@ or separately
 ``` html
 <VColoringTool :colors="colors" />
 ```
-To see how it works, go to [tool demo page](https://sergey-demidov.github.io/vuetify-coloring/#/tools)
+> in this case dont forget to import it too
+
+>To see how it works, go to [tool demo page](https://sergey-demidov.github.io/vuetify-coloring/#/tools)
 
 ### VColoring props list
 | Name | Type | Default | Description |
